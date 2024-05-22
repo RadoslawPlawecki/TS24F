@@ -71,145 +71,158 @@ function DisplayBooks() {
     );
 
     return (
-      <>
-        <List
-          className="Book-list"
-          sx={{
-            width: '100%',
-            maxWidth: 400,
-            bgcolor: 'background.paper',
-            position: 'relative',
-            overflow: 'auto',
-            maxHeight: 200,
-            '& ul': { padding: 0 },
-          }}
-          subheader={<li />}
-        >
-          {books.map((book, index) => (
-            <ListItemButton
-              key={index}
-              style={{ width: '100%', maxWidth: 400 }}
-            >
-              <Tooltip title="Get more details about the book!">
-                <ListItemAvatar>
-                  <Avatar>
-                    <BookIcon />
-                  </Avatar>
-                </ListItemAvatar>
-              </Tooltip>
-              <ListItemText
-                primary={book.title}
-                secondary={`${book.author}, ${book.publication_year}`}
-              />
-            </ListItemButton>
-          ))}
-        </List>
+      <div className="container">
+        <div className="header">
+          <div className="text">Browse the list of books!</div>
+          <div className="underline"></div>
+        </div>
+        <div className="content">
+          <List
+            className="Book-list"
+            sx={{
+              width: '100%',
+              maxWidth: 400,
+              bgcolor: 'background.paper',
+              position: 'relative',
+              overflow: 'auto',
+              maxHeight: 800,
+              '& ul': { padding: 1 },
+            }}
+            subheader={<li />}
+          >
+            {books.map((book, index) => (
+              <ListItemButton
+                key={index}
+                style={{ width: '100%', maxWidth: 400, height: 100 }}
+              >
+                <Tooltip title="Get more details about the book!">
+                  <ListItemAvatar>
+                    <Avatar style={{ background: '#2268a5' }}>
+                      <BookIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                </Tooltip>
+                <ListItemText
+                  primary={book.title}
+                  secondary={`${book.author}, ${book.publication_year}`}
+                />
+              </ListItemButton>
+            ))}
+          </List>
 
-        <Formik
-          initialValues={{
-            isbn: '',
-            author: '',
-            title: '',
-            publisher: '',
-            publication_year: 0,
-            available_copies: 0,
-          }}
-          onSubmit={onSubmit}
-          validationSchema={validationSchema}
-          validateOnChange
-          validateOnBlur
-        >
-          {(formik) => (
-            <form
-              className="Login-form"
-              id="addBookForm"
-              noValidate
-              onSubmit={formik.handleSubmit}
-            >
-              <TextField
-                id="ISBN"
-                name="isbn"
-                label="ISBN"
-                variant="standard"
-                type="string"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.isbn && !!formik.errors.isbn}
-                helperText={formik.touched.isbn && formik.errors.isbn}
-              />
-              <TextField
-                id="Author"
-                name="author"
-                label="Author"
-                variant="standard"
-                type="text"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.author && !!formik.errors.author}
-                helperText={formik.touched.author && formik.errors.author}
-              />
-              <TextField
-                id="Title"
-                name="title"
-                label="Title"
-                variant="standard"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.title && !!formik.errors.title}
-                helperText={formik.touched.title && formik.errors.title}
-              />
-              <TextField
-                id="Publisher"
-                name="publisher"
-                label="Publisher"
-                variant="standard"
-                type="text"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.publisher && !!formik.errors.publisher}
-                helperText={formik.touched.publisher && formik.errors.publisher}
-              />
-              <TextField
-                id="Publication year"
-                name="publication_year"
-                label="Publication year"
-                variant="standard"
-                type="number"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={
-                  formik.touched.publication_year &&
-                  !!formik.errors.publication_year
-                }
-                helperText={
-                  formik.touched.publication_year &&
-                  formik.errors.publication_year
-                }
-              />
-              <TextField
-                id="Available copies"
-                name="available_copies"
-                label="Available copies"
-                variant="standard"
-                type="number"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={
-                  formik.touched.available_copies &&
-                  !!formik.errors.available_copies
-                }
-                helperText={
-                  formik.touched.available_copies &&
-                  formik.errors.available_copies
-                }
-              />
-              <Button variant="contained" type="submit" form="addBookForm">
-                Add a book
-              </Button>
-            </form>
-          )}
-        </Formik>
-      </>
+          <Formik
+            initialValues={{
+              isbn: '',
+              author: '',
+              title: '',
+              publisher: '',
+              publication_year: 0,
+              available_copies: 0,
+            }}
+            onSubmit={onSubmit}
+            validationSchema={validationSchema}
+            validateOnChange
+            validateOnBlur
+          >
+            {(formik) => (
+              <form
+                className="Book-add-form"
+                id="addBookForm"
+                noValidate
+                onSubmit={formik.handleSubmit}
+              >
+                <TextField
+                  id="ISBN"
+                  name="isbn"
+                  label="ISBN"
+                  variant="standard"
+                  type="string"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.isbn && !!formik.errors.isbn}
+                  helperText={formik.touched.isbn && formik.errors.isbn}
+                />
+                <TextField
+                  id="Author"
+                  name="author"
+                  label="Author"
+                  variant="standard"
+                  type="text"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.author && !!formik.errors.author}
+                  helperText={formik.touched.author && formik.errors.author}
+                />
+                <TextField
+                  id="Title"
+                  name="title"
+                  label="Title"
+                  variant="standard"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.title && !!formik.errors.title}
+                  helperText={formik.touched.title && formik.errors.title}
+                />
+                <TextField
+                  id="Publisher"
+                  name="publisher"
+                  label="Publisher"
+                  variant="standard"
+                  type="text"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.publisher && !!formik.errors.publisher}
+                  helperText={
+                    formik.touched.publisher && formik.errors.publisher
+                  }
+                />
+                <TextField
+                  id="Publication year"
+                  name="publication_year"
+                  label="Publication year"
+                  variant="standard"
+                  type="number"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={
+                    formik.touched.publication_year &&
+                    !!formik.errors.publication_year
+                  }
+                  helperText={
+                    formik.touched.publication_year &&
+                    formik.errors.publication_year
+                  }
+                />
+                <TextField
+                  id="Available copies"
+                  name="available_copies"
+                  label="Available copies"
+                  variant="standard"
+                  type="number"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={
+                    formik.touched.available_copies &&
+                    !!formik.errors.available_copies
+                  }
+                  helperText={
+                    formik.touched.available_copies &&
+                    formik.errors.available_copies
+                  }
+                />
+                <Button
+                  size="large"
+                  variant="contained"
+                  type="submit"
+                  form="addBookForm"
+                >
+                  Add a book
+                </Button>
+              </form>
+            )}
+          </Formik>
+        </div>
+      </div>
     );
   };
   return <BookList />;
