@@ -1,21 +1,27 @@
 import React, { useCallback, useMemo } from 'react';
 import './LoginForm.css';
-import { Button, TextField, Typography } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
-import { useApi } from '../api/ApiProvider';
+import { useApi } from '../../api/ApiProvider';
+import { useTranslation } from 'react-i18next';
 
 function LoginForm() {
   const navigate = useNavigate();
   const apiClient = useApi();
+  const { t } = useTranslation();
 
   const onSubmit = useCallback(
     (values: { username: string; password: string }, formik: any) => {
       apiClient.login(values).then((response) => {
         console.log(response);
         if (response.success) {
-          navigate('/menu');
+          if (localStorage.getItem('userRole') === 'ROLE_ADMIN') {
+            navigate('/menu_admin');
+          } else {
+            navigate('/menu');
+          }
         } else {
           formik.setFieldError('username', 'Invalid username or password!');
         }
@@ -27,19 +33,19 @@ function LoginForm() {
   const validationSchema = useMemo(
     () =>
       yup.object().shape({
-        username: yup.string().required('Username is required!'),
+        username: yup.string().required(t('required_username')),
         password: yup
           .string()
-          .required('Password is required!')
-          .min(8, 'Password must be at least 8 characters!'),
+          .required(t('required_password'))
+          .min(8, t('password_requirements')),
       }),
-    [],
+    [t],
   );
 
   return (
     <div className="container">
       <div className="header">
-        <div className="text">Log in</div>
+        <div className="text">{t('login')}</div>
         <div className="underline"></div>
       </div>
       <Formik
@@ -59,7 +65,7 @@ function LoginForm() {
             <TextField
               id="username"
               name="username"
-              label="Username"
+              label={t('username')}
               variant="standard"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -69,7 +75,7 @@ function LoginForm() {
             <TextField
               id="password"
               name="password"
-              label="Password"
+              label={t('password')}
               variant="standard"
               type="password"
               onChange={formik.handleChange}
@@ -84,7 +90,7 @@ function LoginForm() {
               form="signForm"
               disabled={!(formik.isValid && formik.dirty)}
             >
-              Login
+              {t('login')}
             </Button>
           </form>
         )}

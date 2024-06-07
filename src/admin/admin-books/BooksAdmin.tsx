@@ -1,5 +1,5 @@
 import * as React from 'react';
-import './DisplayBooks.css';
+import './BooksAdmin.css';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
@@ -7,21 +7,28 @@ import Avatar from '@mui/material/Avatar';
 import BookIcon from '@mui/icons-material/Book';
 import { Button, ListItemButton, TextField, Tooltip } from '@mui/material';
 import { Formik } from 'formik';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import * as yup from 'yup';
+import { useApi } from '../../api/ApiProvider';
+import { useTranslation } from 'react-i18next';
 
-function DisplayBooks() {
+function BooksAdmin() {
+  const apiClient = useApi();
+  const { t } = useTranslation();
+
   const BookList = () => {
-    const [books, setBooks] = useState([
-      {
-        isbn: '1234567890',
-        author: 'J.K. Rowling',
-        title: 'Harry Potter and the Goblet of Fire',
-        publisher: 'Bloomsbury Publishing',
-        publication_year: 2014,
-        available_copies: 10,
-      },
-    ]);
+    const [books, setBooks] = useState<any[]>([]);
+
+    useEffect(() => {
+      apiClient.getBooks().then((response: any) => {
+        if (response.success) {
+          console.log('Books displayed!', response.data);
+          setBooks(response.data);
+        } else {
+          console.error('Error displaying books:', response.statusCode);
+        }
+      });
+    }, []);
 
     const onSubmit = (
       values: {
@@ -29,22 +36,20 @@ function DisplayBooks() {
         author: string;
         title: string;
         publisher: string;
-        publication_year: number;
-        available_copies: number;
+        publicationYear: number;
+        availableCopies: number;
       },
       { resetForm }: { resetForm: () => void },
     ) => {
-      console.log('Form submitted!', values);
-      const newBook = {
-        isbn: values.isbn,
-        author: values.author,
-        title: values.title,
-        publisher: values.publisher,
-        publication_year: values.publication_year,
-        available_copies: values.available_copies,
-      };
-      setBooks([...books, newBook]);
-      resetForm();
+      apiClient.addBook(values).then((response: any) => {
+        if (response.success) {
+          console.log('Form submitted!', values);
+          setBooks((prevBooks) => [...prevBooks, response.data]);
+          resetForm();
+        } else {
+          console.error('Error submitting form:', response.statusCode);
+        }
+      });
     };
 
     const validationSchema = useMemo(
@@ -52,40 +57,39 @@ function DisplayBooks() {
         yup.object().shape({
           isbn: yup
             .string()
-            .required('ISBN is required!')
-            .min(13, 'ISBN must consist of 13 digits!')
-            .max(13, 'ISBN must consist of 13 digits!'),
-          author: yup.string().required('Author is required!'),
-          title: yup.string().required('Title is required!'),
-          publisher: yup.string().required('Publisher is required!'),
-          publication_year: yup
+            .required(t('required_isbn'))
+            .min(13, t('isbn_requirements'))
+            .max(13, t('isbn_requirements')),
+          author: yup.string().required(t('required_author')),
+          title: yup.string().required(t('required_title')),
+          publisher: yup.string().required(t('required_publisher')),
+          publicationYear: yup
             .number()
-            .required('Publication year is required!')
-            .min(0, 'Publication year cannot be less than 0!'),
-          available_copies: yup
+            .required(t('required_publication_year')),
+          availableCopies: yup
             .number()
-            .required('Number of available copies is required!')
-            .min(0, 'Number of available copies cannot be less than 0!'),
+            .required(t('required_available_copies'))
+            .min(0, t('available_copies_requirements')),
         }),
       [],
     );
 
     return (
-      <div className="container">
-        <div className="header">
-          <div className="text">Browse the list of books!</div>
-          <div className="underline"></div>
+      <div className="book-container">
+        <div className="book-header">
+          <div className="book-text">{t('books_browse')}</div>
+          <div className="book-underline"></div>
         </div>
-        <div className="content">
+        <div className="book-content">
           <List
-            className="Book-list"
+            className="book-list"
             sx={{
               width: '100%',
               maxWidth: 400,
               bgcolor: 'background.paper',
               position: 'relative',
               overflow: 'auto',
-              maxHeight: 800,
+              maxHeight: 600,
               '& ul': { padding: 1 },
             }}
             subheader={<li />}
@@ -95,7 +99,7 @@ function DisplayBooks() {
                 key={index}
                 style={{ width: '100%', maxWidth: 400, height: 100 }}
               >
-                <Tooltip title="Get more details about the book!">
+                <Tooltip title={t('get_more_details_books')}>
                   <ListItemAvatar>
                     <Avatar style={{ background: '#2268a5' }}>
                       <BookIcon />
@@ -104,7 +108,7 @@ function DisplayBooks() {
                 </Tooltip>
                 <ListItemText
                   primary={book.title}
-                  secondary={`${book.author}, ${book.publication_year}`}
+                  secondary={`${book.author}, ${book.publicationYear}`}
                 />
               </ListItemButton>
             ))}
@@ -116,8 +120,8 @@ function DisplayBooks() {
               author: '',
               title: '',
               publisher: '',
-              publication_year: 0,
-              available_copies: 0,
+              publicationYear: 0,
+              availableCopies: 0,
             }}
             onSubmit={onSubmit}
             validationSchema={validationSchema}
@@ -126,7 +130,7 @@ function DisplayBooks() {
           >
             {(formik) => (
               <form
-                className="Book-add-form"
+                className="book-add-form"
                 id="addBookForm"
                 noValidate
                 onSubmit={formik.handleSubmit}
@@ -145,7 +149,7 @@ function DisplayBooks() {
                 <TextField
                   id="Author"
                   name="author"
-                  label="Author"
+                  label={t('author')}
                   variant="standard"
                   type="text"
                   onChange={formik.handleChange}
@@ -156,7 +160,7 @@ function DisplayBooks() {
                 <TextField
                   id="Title"
                   name="title"
-                  label="Title"
+                  label={t('title')}
                   variant="standard"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -166,7 +170,7 @@ function DisplayBooks() {
                 <TextField
                   id="Publisher"
                   name="publisher"
-                  label="Publisher"
+                  label={t('publisher')}
                   variant="standard"
                   type="text"
                   onChange={formik.handleChange}
@@ -178,36 +182,36 @@ function DisplayBooks() {
                 />
                 <TextField
                   id="Publication year"
-                  name="publication_year"
-                  label="Publication year"
+                  name="publicationYear"
+                  label={t('publication_year')}
                   variant="standard"
                   type="number"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   error={
-                    formik.touched.publication_year &&
-                    !!formik.errors.publication_year
+                    formik.touched.publicationYear &&
+                    !!formik.errors.publicationYear
                   }
                   helperText={
-                    formik.touched.publication_year &&
-                    formik.errors.publication_year
+                    formik.touched.publicationYear &&
+                    formik.errors.publicationYear
                   }
                 />
                 <TextField
                   id="Available copies"
-                  name="available_copies"
-                  label="Available copies"
+                  name="availableCopies"
+                  label={t('available_copies')}
                   variant="standard"
                   type="number"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   error={
-                    formik.touched.available_copies &&
-                    !!formik.errors.available_copies
+                    formik.touched.availableCopies &&
+                    !!formik.errors.availableCopies
                   }
                   helperText={
-                    formik.touched.available_copies &&
-                    formik.errors.available_copies
+                    formik.touched.availableCopies &&
+                    formik.errors.availableCopies
                   }
                 />
                 <Button
@@ -216,7 +220,7 @@ function DisplayBooks() {
                   type="submit"
                   form="addBookForm"
                 >
-                  Add a book
+                  {t('book_add')}
                 </Button>
               </form>
             )}
@@ -228,4 +232,4 @@ function DisplayBooks() {
   return <BookList />;
 }
 
-export default DisplayBooks;
+export default BooksAdmin;
