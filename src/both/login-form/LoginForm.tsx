@@ -12,18 +12,30 @@ function LoginForm() {
   const apiClient = useApi();
   const { t } = useTranslation();
 
+  // get an id of logging user
+  const getUserDetails = () => {
+    apiClient.getMe().then((response: any) => {
+      if (response.success) {
+        localStorage.setItem('userId', response.data.id);
+      } else {
+        return null;
+      }
+    });
+  };
+
   const onSubmit = useCallback(
     (values: { username: string; password: string }, formik: any) => {
       apiClient.login(values).then((response) => {
         console.log(response);
         if (response.success) {
+          getUserDetails();
           if (localStorage.getItem('userRole') === 'ROLE_ADMIN') {
             navigate('/menu_admin');
           } else {
             navigate('/menu');
           }
         } else {
-          formik.setFieldError('username', 'Invalid username or password!');
+          formik.setFieldError('username', t('invalid_username_or_password'));
         }
       });
     },

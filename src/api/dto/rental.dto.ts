@@ -2,6 +2,7 @@ import { GetBookDTO } from './book.dto';
 import { GetUserSimplifiedDTO } from './user.dto';
 
 export class GetRentalDTO {
+  id: number | undefined;
   book: GetBookDTO | undefined;
   user: GetUserSimplifiedDTO | undefined;
   startDate: string | undefined;
@@ -10,7 +11,8 @@ export class GetRentalDTO {
 }
 
 export class UpdateRentalDTO {
-  returnDate: string | undefined;
+  id: number | undefined;
+  returnDate: string | null | undefined;
 }
 
 export class UpdateRentalResponseDTO {

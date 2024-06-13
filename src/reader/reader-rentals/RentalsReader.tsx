@@ -5,63 +5,30 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import BookIcon from '@mui/icons-material/LocalLibrary';
-import { Box, Button, ListItemButton, Tooltip } from '@mui/material';
+import { ListItemButton, Tooltip } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useApi } from '../../api/ApiProvider';
-import Modal from '@mui/material/Modal';
 import { useTranslation } from 'react-i18next';
 
 function RentalsAdmin() {
   const apiClient = useApi();
   const { t } = useTranslation();
 
+  // if it's a reader, get only their rentals
   const RentalList = () => {
     const [rentals, setRentals] = useState<any[]>([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedRentalIndex, setSelectedRentalIndex] = useState<
-      number | null
-    >(null);
-    const [returnDate, setReturnDate] = useState<string>(
-      new Date().toISOString().substring(0, 10),
-    );
-
     useEffect(() => {
-      apiClient.getRentals().then((response: any) => {
-        if (response.success) {
-          console.log('Rentals displayed!', response.data);
-          setRentals(response.data);
-        } else {
-          console.error('Error displaying admin-rentals:', response.statusCode);
-        }
-      });
+      apiClient
+        .getRentalsByUser(Number(localStorage.getItem('userId')))
+        .then((response: any) => {
+          if (response.success) {
+            console.log('Rentals displayed!', response.data);
+            setRentals(response.data);
+          } else {
+            console.error('Error displaying rentals:', response.statusCode);
+          }
+        });
     }, []);
-
-    const handleReturnClick = (index: number) => {
-      setSelectedRentalIndex(index);
-      setIsModalOpen(true);
-    };
-
-    const handleModalClose = () => {
-      setIsModalOpen(false);
-      setSelectedRentalIndex(null);
-    };
-
-    const handleReturnSubmit = () => {
-      if (selectedRentalIndex === null) return;
-      const updatedRentalData = { returnDate };
-      apiClient.updateRental(updatedRentalData).then((response: any) => {
-        console.log('Server response: ', response);
-        if (response.success) {
-          console.log('Rental updated!', response.data);
-          const updatedRentals = [...rentals];
-          updatedRentals[selectedRentalIndex].wasReturned = true;
-          setRentals(updatedRentals);
-        } else {
-          console.error('Error updating a rental:', response.statusCode);
-        }
-        handleModalClose();
-      });
-    };
 
     const onSubmit = (values: {
       book: {
@@ -109,7 +76,7 @@ function RentalsAdmin() {
               bgcolor: 'background.paper',
               position: 'relative',
               overflow: 'auto',
-              maxHeight: 200,
+              maxHeight: 300,
               '& ul': { padding: 0 },
             }}
             subheader={<li />}
@@ -140,43 +107,10 @@ function RentalsAdmin() {
                   primary={rental.book.title}
                   secondary={`Rented by: ${rental.user.name}, from ${rental.startDate} to ${rental.endDate}`}
                 />
-                <Button
-                  variant="contained"
-                  color={rental.wasReturned ? 'secondary' : 'primary'}
-                  onClick={() => handleReturnClick(index)}
-                >
-                  {rental.wasReturned ? 'Undo Return' : 'Mark as Returned'}
-                </Button>
               </ListItemButton>
             ))}
           </List>
         </div>
-        <Modal open={isModalOpen} onClose={handleModalClose}>
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 400,
-              bgcolor: 'background.paper',
-              border: '2px solid #000',
-              boxShadow: 24,
-              p: 4,
-            }}
-          >
-            <h2>Enter return date</h2>
-            <input
-              id="returnDate"
-              name="returnDate"
-              type="date"
-              value={returnDate}
-              onChange={(e) => setReturnDate(e.target.value)}
-            />
-            <button onClick={handleReturnSubmit}>Submit</button>
-            <button onClick={handleModalClose}>Cancel</button>
-          </Box>
-        </Modal>
       </div>
     );
   };

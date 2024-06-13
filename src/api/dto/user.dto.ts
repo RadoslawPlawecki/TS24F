@@ -4,6 +4,7 @@ export class GetUserSimplifiedDTO {
 }
 
 export class GetUserFullDTO {
+  id: number | undefined;
   name: string | undefined;
   username: string | undefined;
   email: string | undefined;

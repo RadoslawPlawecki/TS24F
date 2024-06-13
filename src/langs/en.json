@@ -6,6 +6,7 @@
   "required_password": "Password is required!",
   "password_requirements": "Password must be at least 8 characters!",
   "do_not_have_account": "Don’t have an account? Sign up!",
+  "invalid_username_or_password": "Invalid username or password",
   "welcome_user": "Welcome in the library!",
   "welcome_admin": "Manage the library",
   "display_books": "Books",
@@ -34,6 +35,12 @@
   "rented_by": "Rented by:",
   "from": "from",
   "to": "to",
+  "enter_return_date": "Enter return date of the book",
+  "confirm_undo_return": "Are you sure you want to undo the return of the selected book?",
+  "submit": "OK",
+  "cancel": "Cancel",
+  "yes": "Yes",
+  "no": "No",
   "display_users": "Users",
   "users_browse": "Browse the list of users",
   "name": "Name",
@@ -46,5 +53,9 @@
   "user_add": "Add a user",
   "role_reader": "Reader",
   "role_admin": "Admin",
-  "delete_user": "Delete"
+  "delete_user": "Delete",
+  "user_information": "User information",
+  "close": "Close",
+  "display_user_information": "Display user information",
+  "log_out": "Log out"
 }

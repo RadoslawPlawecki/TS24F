@@ -29,6 +29,19 @@ export class LibraryClient {
       baseURL: 'http://localhost:8081',
     });
 
+    this.client.interceptors.response.use(
+      (response) => {
+        return response;
+      },
+      (error) => {
+        if (error.response && error.response.status === 401) {
+          localStorage.removeItem('authToken');
+          window.location.href = '/login';
+        }
+        return Promise.reject(error);
+      },
+    );
+
     const token = localStorage.getItem('authToken'); // get a token if a page is reloaded
     if (token) {
       this.client.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -57,7 +70,6 @@ export class LibraryClient {
           console.error('Invalid token:', error);
         }
       }
-
       return {
         success: true,
         data: response.data,
@@ -156,6 +168,47 @@ export class LibraryClient {
     }
   }
 
+  public async getRentalsByUser(
+    id: number,
+  ): Promise<ClientResponse<GetRentalDTO | null>> {
+    try {
+      const response: AxiosResponse<GetRentalDTO> = await this.client.get(
+        `rental/get?userId=${id}`,
+      );
+      return {
+        success: true,
+        data: response.data,
+        statusCode: response.status,
+      };
+    } catch (error) {
+      const AxiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: null,
+        statusCode: AxiosError.response?.status || 0,
+      };
+    }
+  }
+
+  public async getMe(): Promise<ClientResponse<GetUserFullDTO | null>> {
+    try {
+      const response: AxiosResponse<GetUserFullDTO> =
+        await this.client.get('user/get/me');
+      return {
+        success: true,
+        data: response.data,
+        statusCode: response.status,
+      };
+    } catch (error) {
+      const AxiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: null,
+        statusCode: AxiosError.response?.status || 0,
+      };
+    }
+  }
+
   public async getUsers(): Promise<ClientResponse<GetUserFullDTO | null>> {
     try {
       const response: AxiosResponse<GetUserFullDTO> =
@@ -179,6 +232,7 @@ export class LibraryClient {
     data: UpdateRentalDTO,
   ): Promise<ClientResponse<UpdateRentalResponseDTO | null>> {
     try {
+      console.log(data);
       const response: AxiosResponse<UpdateRentalResponseDTO> =
         await this.client.patch('rental/update', data);
       return {

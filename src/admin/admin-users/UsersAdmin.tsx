@@ -8,8 +8,9 @@ import PersonIcon from '@mui/icons-material/Person';
 import {
   Button,
   FormControl,
+  FormHelperText,
   InputLabel,
-  ListItemButton,
+  ListItem,
   MenuItem,
   Select,
   TextField,
@@ -114,14 +115,18 @@ function UsersAdmin() {
             subheader={<li />}
           >
             {users.map((user, index) => (
-              <ListItemButton
+              <ListItem
                 key={index}
                 style={{
                   width: '100%',
                   maxWidth: 650,
                 }}
               >
-                <Tooltip title={user.role}>
+                <Tooltip
+                  title={
+                    user.role === 'ADMIN' ? t('role_admin') : t('role_reader')
+                  }
+                >
                   <ListItemAvatar>
                     <Avatar
                       style={{
@@ -143,7 +148,7 @@ function UsersAdmin() {
                 >
                   {t('delete_user')}
                 </Button>
-              </ListItemButton>
+              </ListItem>
             ))}
           </List>
           <Formik
@@ -214,7 +219,11 @@ function UsersAdmin() {
                     <MenuItem value="ROLE_READER">{t('role_reader')}</MenuItem>
                   </Select>
                   {formik.touched.role && formik.errors.role && (
-                    <div className="error">{formik.errors.role}</div>
+                    <FormHelperText
+                      error={formik.touched.role && !!formik.errors.role}
+                    >
+                      {formik.errors.role}
+                    </FormHelperText>
                   )}
                 </FormControl>
                 <TextField
