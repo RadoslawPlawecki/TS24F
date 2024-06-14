@@ -49,3 +49,83 @@
     flex-wrap: nowrap;
     width: 100%;
 }
+
+.modal-headers {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: 20px;
+    margin-right: 110px;
+    padding: 20px;
+    gap: 10px;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 380px;
+    margin-top: -50px;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 20px;
+    gap: 10px;
+}
+
+.modal-book-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    color: #062967;
+    font-size: 18px;
+    width: 250px;
+}
+
+.modal-rental-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    color: #062967;
+    font-size: 18px;
+    width: 250px;
+}
+
+.modal-review-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    color: #062967;
+    font-size: 18px;
+    width: 250px;
+}
+
+.modal-horizontal-line {
+    width: 6px;
+    height: 61px;
+    background: #1648a4;
+    border-radius: 9px;
+}
+
+.modal-text-body {
+    color: #062967;
+    padding-top: 20px;
+    font-size: 18px;
+}
+
+.modal-button {
+    gap: 30px;
+    width: 100%;
+    margin-top: 35px;
+}
+
+.book-underline-minor {
+    align-items: center;
+    width: 61px;
+    height: 2px;
+    background: #1648a4;
+    border-radius: 9px;
+}

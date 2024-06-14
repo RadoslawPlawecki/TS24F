@@ -1,4 +1,5 @@
 export class GetBookDTO {
+  id: number | undefined;
   isbn: string | undefined;
   title: string | undefined;
   author: string | undefined;

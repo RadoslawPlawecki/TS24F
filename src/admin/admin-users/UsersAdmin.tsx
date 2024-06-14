@@ -6,6 +6,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import PersonIcon from '@mui/icons-material/Person';
 import {
+  Box,
   Button,
   FormControl,
   FormHelperText,
@@ -21,10 +22,15 @@ import { useApi } from '../../api/ApiProvider';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 import { Formik } from 'formik';
+import Modal from '@mui/material/Modal';
 
 function UsersAdmin() {
   const apiClient = useApi();
   const { t } = useTranslation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(
+    null,
+  );
 
   const UserList = () => {
     const [users, setUsers] = useState<any[]>([]);
@@ -39,6 +45,16 @@ function UsersAdmin() {
         }
       });
     }, []);
+
+    const handleDeleteClick = (index: number) => {
+      setSelectedUserIndex(index);
+      setIsModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+      setIsModalOpen(false);
+      setSelectedUserIndex(null);
+    };
 
     const onSubmit = (
       values: {
@@ -82,16 +98,19 @@ function UsersAdmin() {
       }
     };
 
-    const deleteUser = (userId: number) => {
-      apiClient.deleteUser(userId).then((response: any) => {
+    const handleDeleteUser = () => {
+      if (selectedUserIndex === null) return;
+      const deletedUserId = users[selectedUserIndex].id;
+      apiClient.deleteUser(deletedUserId).then((response: any) => {
         if (response.success) {
-          console.log('User deleted!', userId);
+          console.log('User deleted!', deletedUserId);
           setUsers((prevUsers) =>
-            prevUsers.filter((user) => user.id !== userId),
+            prevUsers.filter((user) => user.id !== deletedUserId),
           );
         } else {
-          console.error('Error deleting user:', response.statusCode);
+          console.error('Error deleting the user:', response.statusCode);
         }
+        handleModalClose();
       });
     };
 
@@ -144,13 +163,48 @@ function UsersAdmin() {
                 <Button
                   variant="outlined"
                   color="error"
-                  onClick={() => deleteUser(user.id)}
+                  onClick={() => handleDeleteClick(index)}
                 >
                   {t('delete_user')}
                 </Button>
               </ListItem>
             ))}
           </List>
+          <Modal open={isModalOpen} onClose={handleModalClose}>
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 600,
+                overflow: 'auto',
+                borderRadius: 3,
+                bgcolor: 'background.paper',
+                border: '3px solid #1648a4',
+                boxShadow: 24,
+                p: 4,
+              }}
+            >
+              <h2 className="modal-text">{t('confirm_deletion_question')}</h2>
+              <div className="modal-button">
+                <Button
+                  onClick={handleDeleteUser}
+                  variant="outlined"
+                  size="large"
+                >
+                  {t('yes')}
+                </Button>
+                <Button
+                  onClick={handleModalClose}
+                  variant="outlined"
+                  size="large"
+                >
+                  {t('no')}
+                </Button>
+              </div>
+            </Box>
+          </Modal>
           <Formik
             initialValues={{
               name: '',

@@ -6,6 +6,8 @@ import {
   GetBookDTO,
 } from './dto/book.dto';
 import {
+  CreateRentalDTO,
+  CreateRentalResponseDTO,
   GetRentalDTO,
   UpdateRentalDTO,
   UpdateRentalResponseDTO,
@@ -14,6 +16,7 @@ import { jwtDecode } from 'jwt-decode';
 import { TokenPayload } from './security/token.payload';
 import { GetUserFullDTO } from './dto/user.dto';
 import { RegisterDTO, RegisterResponseDTO } from './dto/register.dto';
+import { GetReviewDTO } from './dto/review.dto';
 
 export type ClientResponse<T> = {
   success: boolean;
@@ -86,28 +89,6 @@ export class LibraryClient {
     }
   }
 
-  public async addBook(
-    data: CreateBookDTO,
-  ): Promise<ClientResponse<CreateBookResponseDTO | null>> {
-    try {
-      const response: AxiosResponse<CreateBookResponseDTO> =
-        await this.client.post('/book/add', data);
-      return {
-        success: true,
-        data: response.data,
-        statusCode: response.status,
-      };
-    } catch (error) {
-      const AxiosError = error as AxiosError<Error>;
-
-      return {
-        success: false,
-        data: null,
-        statusCode: AxiosError.response?.status || 0,
-      };
-    }
-  }
-
   public async registerUser(
     data: RegisterDTO,
   ): Promise<ClientResponse<RegisterResponseDTO | null>> {
@@ -130,10 +111,54 @@ export class LibraryClient {
     }
   }
 
+  public async addBook(
+    data: CreateBookDTO,
+  ): Promise<ClientResponse<CreateBookResponseDTO | null>> {
+    try {
+      const response: AxiosResponse<CreateBookResponseDTO> =
+        await this.client.post('/book/add', data);
+      return {
+        success: true,
+        data: response.data,
+        statusCode: response.status,
+      };
+    } catch (error) {
+      const AxiosError = error as AxiosError<Error>;
+
+      return {
+        success: false,
+        data: null,
+        statusCode: AxiosError.response?.status || 0,
+      };
+    }
+  }
+
   public async getBooks(): Promise<ClientResponse<GetBookDTO | null>> {
     try {
       const response: AxiosResponse<GetBookDTO> =
         await this.client.get('book/get');
+      return {
+        success: true,
+        data: response.data,
+        statusCode: response.status,
+      };
+    } catch (error) {
+      const AxiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: null,
+        statusCode: AxiosError.response?.status || 0,
+      };
+    }
+  }
+
+  public async getBookById(
+    id: number,
+  ): Promise<ClientResponse<GetBookDTO | null>> {
+    try {
+      const response: AxiosResponse<GetBookDTO> = await this.client.get(
+        `book/${id}`,
+      );
       return {
         success: true,
         data: response.data,
@@ -182,6 +207,28 @@ export class LibraryClient {
       };
     } catch (error) {
       const AxiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: null,
+        statusCode: AxiosError.response?.status || 0,
+      };
+    }
+  }
+
+  public async addRental(
+    data: CreateRentalDTO,
+  ): Promise<ClientResponse<CreateRentalResponseDTO | null>> {
+    try {
+      const response: AxiosResponse<CreateRentalResponseDTO> =
+        await this.client.post('/rental/add', data);
+      return {
+        success: true,
+        data: response.data,
+        statusCode: response.status,
+      };
+    } catch (error) {
+      const AxiosError = error as AxiosError<Error>;
+
       return {
         success: false,
         data: null,
@@ -255,6 +302,89 @@ export class LibraryClient {
     try {
       const response: AxiosResponse<null> = await this.client.delete(
         `user/${id}`,
+      );
+      return {
+        success: true,
+        data: null,
+        statusCode: response.status,
+      };
+    } catch (error) {
+      const AxiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: null,
+        statusCode: AxiosError.response?.status || 0,
+      };
+    }
+  }
+
+  public async getReviews(): Promise<ClientResponse<GetReviewDTO | null>> {
+    try {
+      const response: AxiosResponse<GetReviewDTO> =
+        await this.client.get('review/get');
+      return {
+        success: true,
+        data: response.data,
+        statusCode: response.status,
+      };
+    } catch (error) {
+      const AxiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: null,
+        statusCode: AxiosError.response?.status || 0,
+      };
+    }
+  }
+
+  public async getReviewsByUser(
+    id: number,
+  ): Promise<ClientResponse<GetReviewDTO | null>> {
+    try {
+      const response: AxiosResponse<GetReviewDTO> = await this.client.get(
+        `review/get?userId=${id}`,
+      );
+      return {
+        success: true,
+        data: response.data,
+        statusCode: response.status,
+      };
+    } catch (error) {
+      const AxiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: null,
+        statusCode: AxiosError.response?.status || 0,
+      };
+    }
+  }
+
+  public async getReviewsByBook(
+    id: number,
+  ): Promise<ClientResponse<GetReviewDTO | null>> {
+    try {
+      const response: AxiosResponse<GetReviewDTO> = await this.client.get(
+        `review/get?bookId=${id}`,
+      );
+      return {
+        success: true,
+        data: response.data,
+        statusCode: response.status,
+      };
+    } catch (error) {
+      const AxiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: null,
+        statusCode: AxiosError.response?.status || 0,
+      };
+    }
+  }
+
+  public async deleteReview(id: number): Promise<ClientResponse<null>> {
+    try {
+      const response: AxiosResponse<null> = await this.client.delete(
+        `review/${id}`,
       );
       return {
         success: true,

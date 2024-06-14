@@ -1,4 +1,4 @@
-.container {
+.menu-container {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -7,6 +7,7 @@
     background: #ffffff;
     padding-bottom: 20px;
     width: 700px;
+    height: 570px;
     border-radius: 30px;
 }
 

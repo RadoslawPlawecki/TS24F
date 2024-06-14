@@ -5,7 +5,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import BookIcon from '@mui/icons-material/LocalLibrary';
-import { ListItemButton, Tooltip } from '@mui/material';
+import { Button, ListItem, Tooltip } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useApi } from '../../api/ApiProvider';
 import { useTranslation } from 'react-i18next';
@@ -30,26 +30,6 @@ function RentalsAdmin() {
         });
     }, []);
 
-    const onSubmit = (values: {
-      book: {
-        isbn: string;
-        author: string;
-        title: string;
-        publisher: string;
-        publicationYear: number;
-        availableCopies: boolean;
-      };
-      user: {
-        name: string;
-        email: string;
-      };
-      startDate: string;
-      endDate: string;
-      wasReturned: boolean;
-    }) => {
-      console.log('Form submitted!', values);
-    };
-
     const checkIfReturned = (dateFromDB: any, status: any) => {
       const date = new Date(dateFromDB);
       if (Date.now() > date.getTime() && !status) {
@@ -72,7 +52,7 @@ function RentalsAdmin() {
             className="Rental-list"
             sx={{
               width: '100%',
-              maxWidth: 650,
+              maxWidth: 700,
               bgcolor: 'background.paper',
               position: 'relative',
               overflow: 'auto',
@@ -82,7 +62,7 @@ function RentalsAdmin() {
             subheader={<li />}
           >
             {rentals.map((rental, index) => (
-              <ListItemButton
+              <ListItem
                 key={index}
                 style={{
                   width: '100%',
@@ -107,7 +87,14 @@ function RentalsAdmin() {
                   primary={rental.book.title}
                   secondary={`Rented by: ${rental.user.name}, from ${rental.startDate} to ${rental.endDate}`}
                 />
-              </ListItemButton>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  // onClick={() => handleDeleteClick(index)}
+                >
+                  {t('review_add')}
+                </Button>
+              </ListItem>
             ))}
           </List>
         </div>

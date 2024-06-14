@@ -59,6 +59,13 @@ function MenuReader() {
         >
           {t('display_rentals')}
         </Button>
+        <Button
+          size="large"
+          variant="contained"
+          onClick={() => navigate('/reviews')}
+        >
+          {t('display_reviews')}
+        </Button>
       </div>
       <div className="icons">
         <Tooltip title={t('display_user_information')}>
@@ -78,6 +85,7 @@ function MenuReader() {
             width: 400,
             bgcolor: 'background.paper',
             border: '3px solid #1648a4',
+            borderRadius: 3,
             boxShadow: 24,
             p: 4,
           }}
@@ -86,7 +94,7 @@ function MenuReader() {
           <div className="modal-input">
             {selectedUser && (
               <div>
-                <Typography>
+                <Typography className="modal-text-body">
                   {t('name')}: {selectedUser.name}
                 </Typography>
                 <Typography className="modal-text-body">

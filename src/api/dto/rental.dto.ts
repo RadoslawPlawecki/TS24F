@@ -22,3 +22,16 @@ export class UpdateRentalResponseDTO {
   endDate: string | undefined;
   returnDate: string | undefined;
 }
+
+export class CreateRentalDTO {
+  bookId: number | undefined;
+  userId: number | undefined;
+  endDate: string | undefined;
+}
+
+export class CreateRentalResponseDTO {
+  book: GetBookDTO | undefined;
+  userId: GetUserSimplifiedDTO | undefined;
+  startDate: string | undefined;
+  endDate: string | undefined;
+}

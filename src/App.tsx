@@ -12,6 +12,8 @@ import i18n from './i18n';
 import BooksReader from './reader/reader-books/BooksReader';
 import RentalsReader from './reader/reader-rentals/RentalsReader';
 import UsersAdmin from './admin/admin-users/UsersAdmin';
+import ReviewsReader from './reader/reader-reviews/ReviewsReader';
+import ReviewsAdmin from './admin/admin-reviews/ReviewsAdmin';
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
             <Route path="/rentals_admin" element={<RentalsAdmin />} />
             <Route path="/rentals" element={<RentalsReader />} />
             <Route path="/users" element={<UsersAdmin />} />
+            <Route path="/reviews_admin" element={<ReviewsAdmin />} />
+            <Route path="/reviews" element={<ReviewsReader />} />
           </Routes>
         </ApiProvider>
       </I18nextProvider>

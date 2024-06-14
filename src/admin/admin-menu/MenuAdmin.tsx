@@ -35,11 +35,11 @@ function MenuAdmin() {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedUser(null); // Clear selected user details
+    setSelectedUser(null); // clear selected user details
   };
 
   return (
-    <div className="container">
+    <div className="menu-container">
       <div className="header">
         <div className="text">{t('welcome_admin')}</div>
         <div className="underline"></div>
@@ -57,6 +57,13 @@ function MenuAdmin() {
             onClick={() => navigate('/rentals_admin')}
           >
             {t('display_rentals')}
+          </Button>
+          <Button
+            size="large"
+            variant="contained"
+            onClick={() => navigate('/reviews_admin')}
+          >
+            {t('display_reviews')}
           </Button>
           <Button
             size="large"
@@ -86,6 +93,7 @@ function MenuAdmin() {
             bgcolor: 'background.paper',
             border: '3px solid #1648a4',
             boxShadow: 24,
+            borderRadius: 3,
             p: 4,
           }}
         >
@@ -93,7 +101,7 @@ function MenuAdmin() {
           <div className="modal-input">
             {selectedUser && (
               <div>
-                <Typography>
+                <Typography className="modal-text-body">
                   {t('name')}: {selectedUser.name}
                 </Typography>
                 <Typography className="modal-text-body">
