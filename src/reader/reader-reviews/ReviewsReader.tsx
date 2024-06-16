@@ -1,19 +1,31 @@
 import * as React from 'react';
+import './ReviewsReader.css';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
-import { Box, Button, ListItem, Stack, Tooltip } from '@mui/material';
+import {
+  Box,
+  Button,
+  ListItem,
+  Rating,
+  Stack,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useApi } from '../../api/ApiProvider';
 import { useTranslation } from 'react-i18next';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import Modal from '@mui/material/Modal';
+import { Formik } from 'formik';
 
 function ReviewsReader() {
   const apiClient = useApi();
   const { t } = useTranslation();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedReviewIndex, setSelectedReviewIndex] = useState<number | null>(
     null,
   );
@@ -34,6 +46,28 @@ function ReviewsReader() {
         });
     }, []);
 
+    const handleEditReview = (values: {
+      id: number;
+      rating: number;
+      comment: string;
+    }) => {
+      if (selectedReviewIndex === null) return;
+      values.id = reviews[selectedReviewIndex].id;
+      apiClient.editReview(values).then((response: any) => {
+        if (response.success) {
+          console.log('Review edited!', response.data);
+          setReviews((prevReviews) =>
+            prevReviews.map((review, index) =>
+              index === selectedReviewIndex ? response.data : review,
+            ),
+          );
+          handleEditModalClose();
+        } else {
+          console.error('Error editing the review:', response.statusCode);
+        }
+      });
+    };
+
     const handleDeleteReview = () => {
       if (selectedReviewIndex === null) return;
       const deletedReviewId = reviews[selectedReviewIndex].id;
@@ -46,17 +80,27 @@ function ReviewsReader() {
         } else {
           console.error('Error deleting the review:', response.statusCode);
         }
-        handleModalClose();
+        handleDeleteModalClose();
       });
     };
 
     const handleDeleteClick = (index: number) => {
       setSelectedReviewIndex(index);
-      setIsModalOpen(true);
+      setIsDeleteModalOpen(true);
     };
 
-    const handleModalClose = () => {
-      setIsModalOpen(false);
+    const handleEditClick = (index: number) => {
+      setSelectedReviewIndex(index);
+      setIsEditModalOpen(true);
+    };
+
+    const handleDeleteModalClose = () => {
+      setIsDeleteModalOpen(false);
+      setSelectedReviewIndex(null);
+    };
+
+    const handleEditModalClose = () => {
+      setIsEditModalOpen(false);
       setSelectedReviewIndex(null);
     };
 
@@ -102,7 +146,7 @@ function ReviewsReader() {
                   <Button
                     variant="outlined"
                     color="secondary"
-                    // onClick={() => handleDeleteClick(index)}
+                    onClick={() => handleEditClick(index)}
                   >
                     {t('review_edit')}
                   </Button>
@@ -117,7 +161,7 @@ function ReviewsReader() {
               </ListItem>
             ))}
           </List>
-          <Modal open={isModalOpen} onClose={handleModalClose}>
+          <Modal open={isDeleteModalOpen} onClose={handleDeleteModalClose}>
             <Box
               sx={{
                 position: 'absolute',
@@ -145,11 +189,87 @@ function ReviewsReader() {
                   {t('yes')}
                 </Button>
                 <Button
-                  onClick={handleModalClose}
+                  onClick={handleDeleteModalClose}
                   variant="outlined"
                   size="large"
                 >
                   {t('no')}
+                </Button>
+              </div>
+            </Box>
+          </Modal>
+          <Modal open={isEditModalOpen} onClose={handleEditModalClose}>
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                overflow: 'auto',
+                bgcolor: 'background.paper',
+                border: '3px solid #1648a4',
+                borderRadius: 3,
+                boxShadow: 24,
+                p: 4,
+              }}
+            >
+              <div className="modal-header">
+                <h2 className="modal-text"> {t('review_modal_title')}</h2>
+                <div className="modal-underline-minor"></div>
+                <Formik
+                  initialValues={{
+                    id: 0,
+                    rating: 0,
+                    comment: '',
+                  }}
+                  validateOnChange
+                  validateOnBlur
+                  enableReinitialize
+                  onSubmit={handleEditReview}
+                >
+                  {(formik) => (
+                    <form
+                      id="editReviewForm"
+                      noValidate
+                      onSubmit={formik.handleSubmit}
+                      className="edit-review-form"
+                    >
+                      <Typography
+                        component="legend"
+                        className="modal-text-body"
+                      >
+                        {t('rating')}:
+                      </Typography>
+                      <Rating
+                        name="rating"
+                        id="rating"
+                        max={10}
+                        value={formik.values.rating}
+                        onChange={(event, newValue) =>
+                          formik.setFieldValue('rating', newValue)
+                        }
+                      />
+                      <TextField
+                        id="comment"
+                        name="comment"
+                        type="text"
+                        label={t('comment')}
+                        fullWidth
+                        multiline
+                        rows={4}
+                        value={formik.values.comment}
+                        onChange={formik.handleChange}
+                      />
+                    </form>
+                  )}
+                </Formik>
+                <Button
+                  form="editReviewForm"
+                  type="submit"
+                  variant="contained"
+                  size="medium"
+                >
+                  {t('edit_a_review')}
                 </Button>
               </div>
             </Box>

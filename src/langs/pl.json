@@ -64,6 +64,7 @@
   "display_user_information": "Wyświetl informacje o użytkowniku",
   "log_out": "Wyloguj się",
   "confirm_deletion_question": "Czy na pewno chcesz usunąć wybranego użytkownika? \n Uwaga: zostaną usunięte należące do niego wypożyczenia i recenzje!",
+  "confirm_deletion_book_question": "Czy na pewno chcesz usunąć wybraną książkę? \n Uwaga: zostaną usunięte odpowiadające jej wypożyczenia i recenzje!",
   "confirm_deletion_review_question": "Czy na pewno chcesz usunąć wybraną recenzję?",
   "end_date": "Data zakończenia",
   "select_user": "Wybierz czytelnika",
@@ -73,5 +74,13 @@
   "your_reviews": "Twoje recenzje",
   "browse_reviews": "Przeglądaj recenzje",
   "review_add": "Oceń",
-  "review_edit": "Edytuj"
+  "review_edit": "Edytuj",
+  "show_more": "Pokaż więcej",
+  "review_modal_title": "Zrecenzuj książkę",
+  "rating": "Ocena (w skali od 1 do 10)",
+  "comment": "Komentarz",
+  "add_a_review": "Dodaj recenzję",
+  "edit_a_review": "Edytuj recenzję",
+  "From": "Od",
+  "edit_book": "Zaktualizuj informacje o książce"
 }

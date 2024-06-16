@@ -25,3 +25,13 @@ export class CreateBookResponseDTO {
   publicationYear: number | undefined;
   availableCopies: number | undefined;
 }
+
+export class EditBookDTO {
+  id: number | undefined;
+  isbn: string | null | undefined;
+  title: string | null | undefined;
+  author: string | null | undefined;
+  publisher: string | null | undefined;
+  publicationYear: number | null | undefined;
+  availableCopies: number | null | undefined;
+}

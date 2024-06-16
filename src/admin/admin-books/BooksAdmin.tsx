@@ -16,6 +16,7 @@ import {
   ListItemButton,
   MenuItem,
   Select,
+  Stack,
   TextField,
   Tooltip,
   Typography,
@@ -31,6 +32,8 @@ function BooksAdmin() {
   const apiClient = useApi();
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [selectedBookIndex, setSelectedBookIndex] = useState<number | null>(
     null,
@@ -175,6 +178,68 @@ function BooksAdmin() {
       [],
     );
 
+    const handleDeleteBook = () => {
+      if (selectedBookIndex === null) return;
+      const deletedBookId = books[selectedBookIndex].id;
+      apiClient.deleteBook(deletedBookId).then((response: any) => {
+        if (response.success) {
+          console.log('Book deleted!', deletedBookId);
+          setBooks((prevBooks) =>
+            prevBooks.filter((book) => book.id !== deletedBookId),
+          );
+        } else {
+          console.error('Error deleting the book:', response.statusCode);
+        }
+        handleDeleteModalClose();
+      });
+    };
+
+    const handleDeleteClick = (index: number) => {
+      setSelectedBookIndex(index);
+      setIsDeleteModalOpen(true);
+    };
+
+    const handleDeleteModalClose = () => {
+      setIsDeleteModalOpen(false);
+      setSelectedBookIndex(null);
+    };
+
+    const handleEditBook = (values: {
+      id: number;
+      isbn: string;
+      author: string;
+      title: string;
+      publisher: string;
+      publicationYear: number;
+      availableCopies: number;
+    }) => {
+      if (selectedBookIndex === null) return;
+      values.id = books[selectedBookIndex].id;
+      apiClient.editBook(values).then((response: any) => {
+        if (response.success) {
+          console.log('Book edited!', response.data);
+          setBooks((prevBooks) =>
+            prevBooks.map((book, index) =>
+              index === selectedBookIndex ? response.data : book,
+            ),
+          );
+          handleEditModalClose();
+        } else {
+          console.error('Error editing the book:', response.statusCode);
+        }
+      });
+    };
+
+    const handleEditClick = (index: number) => {
+      setSelectedBookIndex(index);
+      setIsEditModalOpen(true);
+    };
+
+    const handleEditModalClose = () => {
+      setIsEditModalOpen(false);
+      setSelectedBookIndex(null);
+    };
+
     return (
       <div className="book-container">
         <div className="book-header">
@@ -183,10 +248,9 @@ function BooksAdmin() {
         </div>
         <div className="book-content">
           <List
-            className="book-list"
             sx={{
               width: '100%',
-              maxWidth: 400,
+              maxWidth: 450,
               bgcolor: 'background.paper',
               position: 'relative',
               overflow: 'auto',
@@ -198,7 +262,7 @@ function BooksAdmin() {
             {books.map((book, index) => (
               <ListItemButton
                 key={index}
-                style={{ width: '100%', maxWidth: 400, height: 100 }}
+                style={{ width: '100%', maxWidth: 450, height: 100 }}
                 onClick={() => handleBookClick(index)}
               >
                 <Tooltip title={t('get_more_details_books')}>
@@ -212,9 +276,62 @@ function BooksAdmin() {
                   primary={book.title}
                   secondary={`${book.author}, ${book.publicationYear}`}
                 />
+                <Stack direction="row" spacing={2}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => handleEditClick(index)}
+                  >
+                    {t('review_edit')}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => handleDeleteClick(index)}
+                  >
+                    {t('delete_user')}
+                  </Button>
+                </Stack>
               </ListItemButton>
             ))}
           </List>
+          <Modal open={isDeleteModalOpen} onClose={handleDeleteModalClose}>
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 600,
+                overflow: 'auto',
+                borderRadius: 3,
+                bgcolor: 'background.paper',
+                border: '3px solid #1648a4',
+                boxShadow: 24,
+                p: 4,
+              }}
+            >
+              <h2 className="modal-text">
+                {t('confirm_deletion_book_question')}
+              </h2>
+              <div className="modal-button">
+                <Button
+                  onClick={handleDeleteBook}
+                  variant="outlined"
+                  size="large"
+                >
+                  {t('yes')}
+                </Button>
+                <Button
+                  onClick={handleDeleteModalClose}
+                  variant="outlined"
+                  size="large"
+                >
+                  {t('no')}
+                </Button>
+              </div>
+            </Box>
+          </Modal>
           <Modal open={isModalOpen} onClose={handleModalClose}>
             <Box
               sx={{
@@ -484,6 +601,141 @@ function BooksAdmin() {
               </form>
             )}
           </Formik>
+          <Modal open={isEditModalOpen} onClose={handleEditModalClose}>
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 400,
+                border: '3px solid #1648a4',
+                borderRadius: 3,
+                bgcolor: 'background.paper',
+                boxShadow: 24,
+                p: 4,
+              }}
+            >
+              <h2 className="modal-header">
+                {t('edit_book')}
+                <div className="modal-underline-minor"></div>
+              </h2>
+              <Formik
+                initialValues={{
+                  id: 0,
+                  isbn: '',
+                  author: '',
+                  title: '',
+                  publisher: '',
+                  publicationYear: 0,
+                  availableCopies: 0,
+                }}
+                onSubmit={handleEditBook}
+                validationSchema={validationSchemaBook}
+                validateOnChange
+                validateOnBlur
+              >
+                {(formik) => (
+                  <form
+                    className="book-edit-form"
+                    id="editBookForm"
+                    noValidate
+                    onSubmit={formik.handleSubmit}
+                  >
+                    <TextField
+                      id="ISBN"
+                      name="isbn"
+                      label="ISBN"
+                      variant="standard"
+                      type="string"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.isbn && !!formik.errors.isbn}
+                      helperText={formik.touched.isbn && formik.errors.isbn}
+                    />
+                    <TextField
+                      id="Author"
+                      name="author"
+                      label={t('author')}
+                      variant="standard"
+                      type="text"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.author && !!formik.errors.author}
+                      helperText={formik.touched.author && formik.errors.author}
+                    />
+                    <TextField
+                      id="Title"
+                      name="title"
+                      label={t('title')}
+                      variant="standard"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.title && !!formik.errors.title}
+                      helperText={formik.touched.title && formik.errors.title}
+                    />
+                    <TextField
+                      id="Publisher"
+                      name="publisher"
+                      label={t('publisher')}
+                      variant="standard"
+                      type="text"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={
+                        formik.touched.publisher && !!formik.errors.publisher
+                      }
+                      helperText={
+                        formik.touched.publisher && formik.errors.publisher
+                      }
+                    />
+                    <TextField
+                      id="Publication year"
+                      name="publicationYear"
+                      label={t('publication_year')}
+                      variant="standard"
+                      type="number"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={
+                        formik.touched.publicationYear &&
+                        !!formik.errors.publicationYear
+                      }
+                      helperText={
+                        formik.touched.publicationYear &&
+                        formik.errors.publicationYear
+                      }
+                    />
+                    <TextField
+                      id="Available copies"
+                      name="availableCopies"
+                      label={t('available_copies')}
+                      variant="standard"
+                      type="number"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={
+                        formik.touched.availableCopies &&
+                        !!formik.errors.availableCopies
+                      }
+                      helperText={
+                        formik.touched.availableCopies &&
+                        formik.errors.availableCopies
+                      }
+                    />
+                    <Button
+                      size="large"
+                      variant="contained"
+                      type="submit"
+                      form="editBookForm"
+                    >
+                      {t('review_edit')}
+                    </Button>
+                  </form>
+                )}
+              </Formik>
+            </Box>
+          </Modal>
         </div>
       </div>
     );

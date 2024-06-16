@@ -3,6 +3,7 @@ import { LoginDTO, LoginResponseDTO } from './dto/login.dto';
 import {
   CreateBookDTO,
   CreateBookResponseDTO,
+  EditBookDTO,
   GetBookDTO,
 } from './dto/book.dto';
 import {
@@ -16,7 +17,13 @@ import { jwtDecode } from 'jwt-decode';
 import { TokenPayload } from './security/token.payload';
 import { GetUserFullDTO } from './dto/user.dto';
 import { RegisterDTO, RegisterResponseDTO } from './dto/register.dto';
-import { GetReviewDTO } from './dto/review.dto';
+import {
+  CreateReviewDTO,
+  CreateReviewResponseDTO,
+  EditReviewDTO,
+  EditReviewResponseDTO,
+  GetReviewDTO,
+} from './dto/review.dto';
 
 export type ClientResponse<T> = {
   success: boolean;
@@ -37,7 +44,7 @@ export class LibraryClient {
         return response;
       },
       (error) => {
-        if (error.response && error.response.status === 401) {
+        if (error.response && error.response.status === 403) {
           localStorage.removeItem('authToken');
           window.location.href = '/login';
         }
@@ -162,6 +169,26 @@ export class LibraryClient {
       return {
         success: true,
         data: response.data,
+        statusCode: response.status,
+      };
+    } catch (error) {
+      const AxiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: null,
+        statusCode: AxiosError.response?.status || 0,
+      };
+    }
+  }
+
+  public async deleteBook(id: number): Promise<ClientResponse<null>> {
+    try {
+      const response: AxiosResponse<null> = await this.client.delete(
+        `book/${id}`,
+      );
+      return {
+        success: true,
+        data: null,
         statusCode: response.status,
       };
     } catch (error) {
@@ -381,6 +408,28 @@ export class LibraryClient {
     }
   }
 
+  public async addReview(
+    data: CreateReviewDTO,
+  ): Promise<ClientResponse<CreateReviewResponseDTO | null>> {
+    try {
+      const response: AxiosResponse<CreateReviewResponseDTO> =
+        await this.client.post('/review/add', data);
+      return {
+        success: true,
+        data: response.data,
+        statusCode: response.status,
+      };
+    } catch (error) {
+      const AxiosError = error as AxiosError<Error>;
+
+      return {
+        success: false,
+        data: null,
+        statusCode: AxiosError.response?.status || 0,
+      };
+    }
+  }
+
   public async deleteReview(id: number): Promise<ClientResponse<null>> {
     try {
       const response: AxiosResponse<null> = await this.client.delete(
@@ -393,6 +442,54 @@ export class LibraryClient {
       };
     } catch (error) {
       const AxiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: null,
+        statusCode: AxiosError.response?.status || 0,
+      };
+    }
+  }
+
+  public async editReview(
+    data: EditReviewDTO,
+  ): Promise<ClientResponse<EditReviewResponseDTO | null>> {
+    try {
+      console.log(data);
+      const response: AxiosResponse<EditReviewResponseDTO> =
+        await this.client.patch('review/edit', data);
+      return {
+        success: true,
+        data: response.data,
+        statusCode: response.status,
+      };
+    } catch (error) {
+      const AxiosError = error as AxiosError<Error>;
+
+      return {
+        success: false,
+        data: null,
+        statusCode: AxiosError.response?.status || 0,
+      };
+    }
+  }
+
+  public async editBook(
+    data: EditBookDTO,
+  ): Promise<ClientResponse<GetBookDTO | null>> {
+    try {
+      console.log(data);
+      const response: AxiosResponse<GetBookDTO> = await this.client.patch(
+        'book/edit',
+        data,
+      );
+      return {
+        success: true,
+        data: response.data,
+        statusCode: response.status,
+      };
+    } catch (error) {
+      const AxiosError = error as AxiosError<Error>;
+
       return {
         success: false,
         data: null,

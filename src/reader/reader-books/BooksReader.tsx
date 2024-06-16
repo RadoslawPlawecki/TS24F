@@ -113,10 +113,9 @@ function BooksReader() {
         </div>
         <div className="book-content-reader">
           <List
-            className="book-list-reader"
             sx={{
               width: '100%',
-              maxWidth: 400,
+              maxWidth: 450,
               bgcolor: 'background.paper',
               position: 'relative',
               overflow: 'auto',
@@ -152,8 +151,6 @@ function BooksReader() {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: 700,
-                height: 500,
                 overflow: 'auto',
                 bgcolor: 'background.paper',
                 border: '3px solid #1648a4',
@@ -187,7 +184,7 @@ function BooksReader() {
                       </Typography>
                       <Typography className="modal-text-body">
                         {t('is_available')}:{' '}
-                        {selectedBook.isAvailable === true ? t('no') : t('yes')}
+                        {selectedBook.isAvailable === true ? t('yes') : t('no')}
                       </Typography>
                     </div>
                   )}

@@ -63,7 +63,8 @@
   "close": "Close",
   "display_user_information": "Display user information",
   "log_out": "Log out",
-  "confirm_deletion_question": "\nAre you sure you want to delete the selected user? \n Note: Rentals and reviews belonging to them will be deleted!",
+  "confirm_deletion_question": "Are you sure you want to delete the selected user? \n Note: Rentals and reviews belonging to them will be deleted!",
+  "confirm_deletion_book_question": "Are you sure you want to delete the selected book? \n Note: corresponding rentals and reviews will be deleted!",
   "confirm_deletion_review_question": "Are you sure you want to delete the selected review?",
   "end_date": "End date",
   "select_user": "Choose a reader",
@@ -73,5 +74,13 @@
   "your_reviews": "Your reviews",
   "browse_reviews": "Browse the rentals",
   "review_add": "Review",
-  "review_edit": "Edit"
+  "review_edit": "Edit",
+  "show_more": "Pokaż więcej",
+  "review_modal_title": "Review a book",
+  "rating": "Rating (from 1 to 10)",
+  "comment": "Comment",
+  "add_a_review": "Add a review",
+  "edit_a_review": "Edit a review",
+  "From": "From",
+  "edit_book": "Update information about the book"
 }

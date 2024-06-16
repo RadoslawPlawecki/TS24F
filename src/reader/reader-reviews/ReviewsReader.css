@@ -40,3 +40,28 @@
     padding: 20px;
     gap: 20px;
 }
+
+.edit-review-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 25px;
+    align-items: center;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    gap: 10px;
+}
+
+.modal-underline-minor {
+    align-items: center;
+    width: 61px;
+    height: 4px;
+    margin-top: -20px;
+    background: #1648a4;
+    border-radius: 9px;
+}

@@ -14,6 +14,8 @@ import RentalsReader from './reader/reader-rentals/RentalsReader';
 import UsersAdmin from './admin/admin-users/UsersAdmin';
 import ReviewsReader from './reader/reader-reviews/ReviewsReader';
 import ReviewsAdmin from './admin/admin-reviews/ReviewsAdmin';
+import RequireAuthReader from './config/RequireAuthReader';
+import RequireAuthAdmin from './config/RequireAuthAdmin';
 
 function App() {
   return (
@@ -23,15 +25,87 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/login" />} />
             <Route path="/login" element={<LoginForm />} />
-            <Route path="/books_admin" element={<BooksAdmin />} />
-            <Route path="/books" element={<BooksReader />} />
-            <Route path="/menu_admin" element={<MenuAdmin />} />
-            <Route path="/menu" element={<MenuReader />} />
-            <Route path="/rentals_admin" element={<RentalsAdmin />} />
-            <Route path="/rentals" element={<RentalsReader />} />
-            <Route path="/users" element={<UsersAdmin />} />
-            <Route path="/reviews_admin" element={<ReviewsAdmin />} />
-            <Route path="/reviews" element={<ReviewsReader />} />
+            <Route
+              path="/books_admin"
+              element={
+                <RequireAuthAdmin>
+                  {' '}
+                  <BooksAdmin />{' '}
+                </RequireAuthAdmin>
+              }
+            />
+            <Route
+              path="/books"
+              element={
+                <RequireAuthReader>
+                  {' '}
+                  <BooksReader />{' '}
+                </RequireAuthReader>
+              }
+            />
+            <Route
+              path="/menu_admin"
+              element={
+                <RequireAuthAdmin>
+                  {' '}
+                  <MenuAdmin />{' '}
+                </RequireAuthAdmin>
+              }
+            />
+            <Route
+              path="/menu"
+              element={
+                <RequireAuthReader>
+                  {' '}
+                  <MenuReader />{' '}
+                </RequireAuthReader>
+              }
+            />
+            <Route
+              path="/rentals_admin"
+              element={
+                <RequireAuthAdmin>
+                  {' '}
+                  <RentalsAdmin />{' '}
+                </RequireAuthAdmin>
+              }
+            />
+            <Route
+              path="/rentals"
+              element={
+                <RequireAuthReader>
+                  {' '}
+                  <RentalsReader />{' '}
+                </RequireAuthReader>
+              }
+            />
+            <Route
+              path="/users"
+              element={
+                <RequireAuthAdmin>
+                  {' '}
+                  <UsersAdmin />{' '}
+                </RequireAuthAdmin>
+              }
+            />
+            <Route
+              path="/reviews_admin"
+              element={
+                <RequireAuthAdmin>
+                  {' '}
+                  <ReviewsAdmin />{' '}
+                </RequireAuthAdmin>
+              }
+            />
+            <Route
+              path="/reviews"
+              element={
+                <RequireAuthReader>
+                  {' '}
+                  <ReviewsReader />{' '}
+                </RequireAuthReader>
+              }
+            />
           </Routes>
         </ApiProvider>
       </I18nextProvider>

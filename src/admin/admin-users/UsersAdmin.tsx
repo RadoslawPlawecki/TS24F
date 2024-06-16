@@ -128,7 +128,7 @@ function UsersAdmin() {
               bgcolor: 'background.paper',
               position: 'relative',
               overflow: 'auto',
-              maxHeight: 700,
+              maxHeight: 500,
               '& ul': { padding: 0 },
             }}
             subheader={<li />}
